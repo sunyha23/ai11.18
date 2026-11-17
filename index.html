@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>아이디어 계보</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@700;900&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a lab bench — the lineage chart fills the left like a pedigree sheet with a generation ruler, a fixed specimen panel on the right */
+:root{
+  --bg:#ECEEEC; --surface:#FFFFFF; --sunk:#F5F6F4; --ink:#161918; --muted:#5E6562; --line:#D3D8D5;
+  --path:#0F6E83; --warn:#B23A25; --ok:#2C7A4B;
+  --g-who:#D9484C; --g-what:#D88A17; --g-why:#2F8E50; --g-how:#2471C4; --g-where:#7C4CC7; --g-mood:#BF4590;
+  --f-display:"Gothic A1","IBM Plex Sans KR",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans KR",system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111413; --surface:#1A1E1D; --sunk:#151817; --ink:#E7EBE8; --muted:#97A09B; --line:#2D3331;
+  --path:#5CC3DA; --warn:#FF8A72; --ok:#6FCF97;
+  --g-who:#F2686B; --g-what:#F0A33C; --g-why:#4FB56F; --g-how:#4E97EA; --g-where:#A07AE8; --g-mood:#E06BB2; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111413; --surface:#1A1E1D; --sunk:#151817; --ink:#E7EBE8; --muted:#97A09B; --line:#2D3331;
+  --path:#5CC3DA; --warn:#FF8A72; --ok:#6FCF97;
+  --g-who:#F2686B; --g-what:#F0A33C; --g-why:#4FB56F; --g-how:#4E97EA; --g-where:#A07AE8; --g-mood:#E06BB2; color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--path);outline-offset:2px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.app{max-width:1440px;margin:0 auto;display:flex;flex-direction:column;gap:12px;height:100%}
+
+/* header */
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:10px 20px}
+.brand{display:flex;align-items:baseline;gap:10px}
+.brand h1{font-family:var(--f-display);font-weight:900;font-size:22px;margin:0;letter-spacing:-.01em}
+.brand span{color:var(--muted);font-size:13px}
+.root{flex:1 1 320px;min-width:0;display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--surface);border-radius:4px;padding:6px 12px}
+.root .label{flex:none}
+.root button{all:unset;cursor:pointer;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+.root button:focus-visible{outline:2px solid var(--path)}
+.tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.mode{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.mode i{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.mode.on i{background:var(--ok)} .mode.off i{background:var(--warn)}
+.banner{border:1px dashed var(--line);border-radius:4px;padding:8px 12px;font-size:13px;color:var(--muted);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+.btn{border:1px solid var(--ink);background:var(--ink);color:var(--surface);border-radius:4px;padding:8px 14px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;justify-content:center}
+.btn:hover{opacity:.88}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.ghost:hover{border-color:var(--ink);opacity:1}
+.btn.sm{padding:5px 10px;font-size:13px;font-weight:500}
+.btn[disabled]{opacity:.38;cursor:not-allowed}
+.btn.danger{color:var(--warn);border-color:var(--warn);background:transparent}
+.link{background:none;border:0;padding:0;color:var(--path);cursor:pointer;text-decoration:underline;text-underline-offset:3px;font-size:13px}
+
+/* main */
+.main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 390px;gap:12px}
+.stage{position:relative;border:1px solid var(--line);background:var(--sunk);border-radius:6px;min-height:0;display:flex;flex-direction:column}
+.stagebar{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:4px}
+.legend i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.zoom{display:flex;gap:4px}
+.scroller{flex:1;overflow:auto;min-height:0;position:relative}
+.canvas{position:relative;transform-origin:0 0}
+.canvas svg{position:absolute;inset:0;overflow:visible}
+.edge{fill:none;stroke:var(--line);stroke-width:2}
+.edge.on{stroke:var(--path);stroke-width:3}
+.ruler{position:absolute;left:0;font-family:var(--f-mono);font-size:11px;color:var(--muted);border-top:1px dashed var(--line);width:100%;padding:4px 8px;pointer-events:none}
+
+.node{position:absolute;width:210px;height:128px;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:5px;padding:9px 10px 10px;cursor:pointer;display:flex;flex-direction:column;gap:6px;transition:box-shadow .15s,border-color .15s}
+.node:hover{border-color:var(--muted)}
+.node.on-path{border-color:var(--path)}
+.node.sel{box-shadow:0 0 0 2px var(--ink);border-color:var(--ink)}
+.node.rootn{border-width:2px}
+.node.pending{border-style:dashed;color:var(--muted);align-items:center;justify-content:center;cursor:default}
+.nh{display:flex;justify-content:space-between;gap:6px;font-size:11px;color:var(--muted);font-family:var(--f-mono)}
+.nh .star{color:var(--g-what);font-size:13px;line-height:1}
+.nt{font-size:13px;line-height:1.45;flex:1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical}
+.band{display:flex;gap:2px;height:9px}
+.band i{flex:1;border-radius:1px;background:var(--c)}
+.band i.inh{opacity:.28}
+.band i.chg{opacity:1}
+.band i.rm{background:transparent;border:1px dashed var(--c);opacity:.9}
+.band i.empty{background:transparent;border:1px solid var(--line)}
+.band i.none{background:var(--line);opacity:.6}
+
+/* panel */
+.panel{border:1px solid var(--line);background:var(--surface);border-radius:6px;overflow:auto;min-height:0;display:flex;flex-direction:column}
+.pbody{padding:18px;display:flex;flex-direction:column;gap:18px}
+.phead{display:flex;flex-direction:column;gap:4px}
+.phead h2{font-family:var(--f-display);font-weight:900;font-size:19px;margin:0;text-wrap:balance}
+.phead p{color:var(--muted);font-size:13px;margin:0}
+.sec{display:flex;flex-direction:column;gap:8px}
+textarea,input[type=text]{width:100%;border:1px solid var(--line);background:var(--sunk);border-radius:4px;padding:8px 10px;line-height:1.55}
+textarea{resize:vertical;min-height:84px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row .grow{flex:1}
+.genes{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.gene{display:grid;grid-template-columns:86px minmax(0,1fr);gap:10px;padding:9px 0;border-bottom:1px solid var(--line);align-items:start}
+.gk{display:flex;align-items:center;gap:6px;font-weight:600;font-size:13px}
+.gk i{width:10px;height:10px;border-radius:2px;background:var(--c);flex:none}
+.gv{min-width:0;display:flex;flex-direction:column;gap:6px}
+.gv .val{word-break:keep-all}
+.gv .nil{color:var(--muted);font-style:italic}
+.gene.changed .val{font-weight:600}
+.from{font-size:12px;color:var(--muted)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:4px;overflow:hidden;align-self:flex-start}
+.seg button{border:0;background:transparent;padding:4px 10px;font-size:12px;cursor:pointer;color:var(--muted)}
+.seg button.on{background:var(--ink);color:var(--surface)}
+.seg button[disabled]{opacity:.35;cursor:not-allowed}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--sunk);border-radius:999px;padding:3px 10px;font-size:12.5px;cursor:pointer}
+.chip:hover{border-color:var(--ink)}
+.chip.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.diff{display:flex;flex-direction:column;gap:6px}
+.diff div{font-size:13px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.diff i{width:8px;height:8px;border-radius:2px;background:var(--c);display:inline-block;flex:none;align-self:center}
+.diff s{color:var(--muted)}
+.src{font-family:var(--f-mono);font-size:10.5px;border:1px solid var(--line);border-radius:3px;padding:0 4px;color:var(--muted)}
+.lineage{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.lineage li{display:grid;grid-template-columns:30px minmax(0,1fr);gap:8px;padding:6px 0;position:relative}
+.lineage li::before{content:"";position:absolute;left:14px;top:22px;bottom:-6px;border-left:2px solid var(--path);opacity:.5}
+.lineage li:last-child::before{display:none}
+.lineage .g{font-family:var(--f-mono);font-size:11px;color:var(--path);padding-top:2px}
+.lineage button{all:unset;cursor:pointer;font-size:13px;line-height:1.45}
+.lineage button:hover{text-decoration:underline}
+.lineage button:focus-visible{outline:2px solid var(--path)}
+.lineage .cur{font-weight:600}
+.note{font-size:12.5px;color:var(--muted)}
+.hint{font-size:12.5px;color:var(--warn)}
+.err{border:1px solid var(--warn);color:var(--warn);border-radius:4px;padding:10px 12px;font-size:13px;display:flex;flex-direction:column;gap:8px}
+.spin{width:13px;height:13px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;display:inline-block;animation:sp .8s linear infinite;vertical-align:-2px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.pfoot{position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding:12px 18px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:auto}
+.bars{display:flex;flex-direction:column;gap:6px}
+.bar{display:grid;grid-template-columns:76px 1fr 28px;gap:8px;align-items:center;font-size:12.5px}
+.bar .t{height:10px;background:var(--sunk);border-radius:2px;overflow:hidden;border:1px solid var(--line)}
+.bar .t i{display:block;height:100%;background:var(--c)}
+.bar .n{text-align:right}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat{border:1px solid var(--line);border-radius:4px;padding:8px 10px}
+.stat b{display:block;font-family:var(--f-mono);font-size:20px;font-weight:500}
+.stat span{font-size:12px;color:var(--muted)}
+.obs{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:8px 16px;border-radius:4px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:5}
+.toast.show{opacity:1}
+
+@media (max-width:900px){
+  html,body{height:auto}
+  .main{grid-template-columns:1fr}
+  .stage{height:62vh;min-height:360px}
+  .panel{overflow:visible}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation-duration:2s!important}}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="top">
+    <div class="brand"><h1>아이디어 계보</h1><span>쪼개고, 바꾸고, 되돌아가기</span></div>
+    <div class="root"><span class="label">뿌리</span><button id="rootBtn" title="뿌리 아이디어로 이동"></button></div>
+    <div class="tools">
+      <button class="btn ghost sm" id="readBtn">계보 읽기</button>
+      <button class="btn sm" id="seedBtn">새 씨앗 심기</button>
+    </div>
+  </header>
+  <div class="banner" id="banner" hidden><span>지금 보이는 건 예시 계보예요. 카드를 눌러 둘러보거나, 직접 씨앗을 심어 보세요.</span><button class="link" id="bannerSeed">내 씨앗 심기</button></div>
+
+  <div class="main">
+    <section class="stage" aria-label="계보도">
+      <div class="stagebar">
+        <div class="legend" id="legend"></div>
+        <div class="zoom">
+          <button class="btn ghost sm" id="zOut" aria-label="축소">−</button>
+          <button class="btn ghost sm" id="zFit">맞춤</button>
+          <button class="btn ghost sm" id="zIn" aria-label="확대">＋</button>
+        </div>
+      </div>
+      <div class="scroller" id="scroller"><div class="canvas" id="canvas"></div></div>
+    </section>
+    <aside class="panel" id="panel" aria-live="polite"></aside>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(() => {
+"use strict";
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+const GENES = [
+  { k:"who",   ko:"누가",       q:"누구를 위한 건가요?",          ex:"혼자 사는 대학생" },
+  { k:"what",  ko:"무엇",       q:"핵심이 되는 사물·행위는?",      ex:"저녁 식사" },
+  { k:"why",   ko:"왜",         q:"어떤 문제·욕구에서 출발하나요?", ex:"혼밥의 쓸쓸함" },
+  { k:"how",   ko:"어떻게",     q:"어떤 형식·매체인가요?",          ex:"모바일 앱" },
+  { k:"where", ko:"어디서·언제", q:"어떤 장소·상황에서?",            ex:"평일 저녁 자취방" },
+  { k:"mood",  ko:"어떤 느낌",   q:"어떤 분위기·태도로?",            ex:"부담 없이 가볍게" }
+];
+// direction cards: prompts that push a gene somewhere else, no AI needed
+const DIRS = {
+  who:["정반대의 사람","딱 한 사람으로 좁히기","사람이 아닌 존재","전혀 상관없어 보이는 사람"],
+  what:["더 작게 쪼개기","정반대의 행위","다른 감각으로 바꾸기","부산물이나 흔적"],
+  why:["반대 욕구","더 사소한 이유","더 큰 사회 문제","이유 없이 놀이로"],
+  how:["손에 쥘 수 있는 물건","공간이나 설치","시간이 오래 걸리는 방식","화면 없는 방식"],
+  where:["정반대 장소","아주 짧은 순간","모두가 지나가는 곳","특정 계절·날씨"],
+  mood:["반대 분위기","과장하기","아주 조용하게","일부러 불편하게"]
+};
+const GK = Object.fromEntries(GENES.map(g => [g.k, g]));
+const gc = k => `--c:var(--g-${k})`;
+const BANK = {
+  who:["혼자 사는 사람","어린이","동네 어르신","반려동물 보호자","야간 근무자","여행자","이웃 전체","처음 온 사람","동네 상인","수험생","낯선 두 사람","관광객"],
+  what:["식사","산책","빨래","편지","기다림","소리","냄새","쓰레기","물건 교환","사진","대화","잠","식물"],
+  why:["외로움","지루함","불안","낭비","기억하고 싶음","서툰 관계","시간 부족","비교 피로","소속감","쉼이 필요함","호기심"],
+  how:["모바일 앱","포스터","설치 작품","가구","보드게임","작은 의식","우편","라디오","지도","웹사이트","굿즈","공공 표지판","퍼포먼스"],
+  where:["버스 정류장","엘리베이터","새벽 편의점","학교 복도","골목","빨래방","옥상","지하철 막차","공원 벤치","월요일 아침","비 오는 날"],
+  mood:["장난스럽게","조용하게","진지하게","살짝 불편하게","따뜻하게","낯설게","몰래","과장되게","느리게","의식처럼"]
+};
+
+/* ---------- storage (this browser only) ---------- */
+const KEY = "idea-lineage-v1";
+function save(){ if (T.example) return; try { localStorage.setItem(KEY, JSON.stringify(T)); } catch (e) {} }
+function load(){ try { const t = JSON.parse(localStorage.getItem(KEY) || "null"); return t && t.nodes && t.root ? t : null; } catch (e) { return null; } }
+let nid = 1; const newId = () => "n" + Date.now().toString(36) + (nid++);
+
+function example(){
+  const g = (who,what,why,how,where,mood) => ({who,what,why,how,where,mood});
+  const n = (id,parent,text,genes,changes,star) => ({ id, parent, text, genes, changes: changes || [], star: !!star, t: 0 });
+  const seed = g("혼자 사는 대학생","저녁 식사","혼밥의 쓸쓸함","모바일 앱","평일 저녁 자취방","부담 없이 가볍게");
+  const a = { ...seed, how:"공용 식탁", where:"자취촌 골목" };
+  const b = { ...seed, mood:"의식처럼" };
+  const a1 = { ...a, who:"동네 어르신과 자취생" };
+  const a2 = { ...a, what:"빨래 기다리는 시간", why:"", where:"자취촌 빨래방" };
+  const b1 = { ...b, how:"우편", who:"서로 모르는 자취생 둘" };
+  const nodes = [
+    n("e0", null, "혼자 사는 대학생이 저녁을 덜 쓸쓸하게 먹을 수 있게 돕는 앱", seed),
+    n("e1", "e0", "자취촌 골목에 놓인, 혼자 온 사람끼리 말없이 함께 먹는 공용 식탁", a, [{k:"how",from:"모바일 앱",to:"공용 식탁",src:"random"},{k:"where",from:"평일 저녁 자취방",to:"자취촌 골목",src:"me"}]),
+    n("e2", "e0", "혼자 먹는 저녁을 하나의 작은 의식처럼 차려 주는 앱. 매일 다른 상차림 미션이 온다", b, [{k:"mood",from:"부담 없이 가볍게",to:"의식처럼",src:"me"}]),
+    n("e3", "e1", "골목 공용 식탁에 동네 어르신과 자취생이 반찬 하나씩 들고 와 나눠 먹는 저녁", a1, [{k:"who",from:"혼자 사는 대학생",to:"동네 어르신과 자취생",src:"random"}]),
+    n("e4", "e1", "자취촌 빨래방 한쪽의 긴 식탁. 빨래를 기다리는 동안 혼자 온 사람들이 말없이 같이 앉아 있는 곳", a2, [{k:"what",from:"저녁 식사",to:"빨래 기다리는 시간",src:"random"},{k:"why",from:"혼밥의 쓸쓸함",to:"",src:"me"},{k:"where",from:"자취촌 골목",to:"자취촌 빨래방",src:"random"}], true),
+    n("e5", "e2", "서로 모르는 자취생 둘이 매주 오늘의 상차림 사진과 쪽지를 우편으로 주고받는 교환 저녁", b1, [{k:"how",from:"모바일 앱",to:"우편",src:"random"},{k:"who",from:"혼자 사는 대학생",to:"서로 모르는 자취생 둘",src:"me"}])
+  ];
+  nodes.forEach((x,i) => x.t = i);
+  return { root:"e0", nodes:Object.fromEntries(nodes.map(x => [x.id, x])), order:nodes.map(x => x.id), example:true, returns:1 };
+}
+
+let T = load() || example();
+const UI = { sel: T.root, mode: "view", draft: null, err: "", busy: false, zoom: 1, confirmDel: false, confirmSeed: false, pending: null };
+if (T.example) UI.sel = "e4";
+
+const clean = v => String(v ?? "").replace(/\s+/g, " ").trim().slice(0, 40);
+const rootText = () => T.nodes[T.root].text;
+
+/* ---------- tree helpers ---------- */
+const N = id => T.nodes[id];
+const kids = id => T.order.filter(x => N(x).parent === id);
+function ancestry(id){ const out = []; let c = id; while (c) { out.unshift(c); c = N(c) ? N(c).parent : null; } return out; }
+const depth = id => ancestry(id).length - 1;
+
+/* ---------- tree rendering ---------- */
+const CW = 210, CH = 128, HG = 26, VG = 64, PADL = 72, PADT = 30;
+function layout(){
+  const pos = {}; let leaf = 0, maxD = 0;
+  const all = id => [...kids(id), ...(UI.pending && UI.pending.parent === id ? ["__p"] : [])];
+  (function lay(id, d){
+    maxD = Math.max(maxD, d);
+    const ch = id === "__p" ? [] : all(id);
+    if (!ch.length) pos[id] = { x: leaf++, d };
+    else { ch.forEach(c => lay(c, d + 1)); const xs = ch.map(c => pos[c].x); pos[id] = { x: (Math.min(...xs) + Math.max(...xs)) / 2, d }; }
+  })(T.root, 0);
+  return { pos, w: PADL + leaf * (CW + HG) + 20, h: PADT + (maxD + 1) * (CH + VG), maxD };
+}
+const px = p => ({ x: PADL + p.x * (CW + HG), y: PADT + p.d * (CH + VG) });
+function bandHTML(n){
+  return `<div class="band">${GENES.map(g => {
+    let cls = "inh";
+    if (!n.genes) cls = "none";
+    else { const ch = n.changes.find(c => c.k === g.k);
+      if (ch) cls = ch.to ? "chg" : "rm";
+      else if (!n.genes[g.k]) cls = "empty";
+      else if (n.id === T.root) cls = "chg"; }
+    return `<i class="${cls}" style="${gc(g.k)}" title="${g.ko}: ${esc(n.genes ? n.genes[g.k] || "비어 있음" : "해체 전")}"></i>`; }).join("")}</div>`;
+}
+function renderTree(){
+  const L = layout(), path = new Set(ancestry(UI.sel));
+  let edges = "", cards = "", rulers = "";
+  for (let d = 0; d <= L.maxD; d++) rulers += `<div class="ruler" style="top:${PADT + d*(CH+VG) - 22}px">${d === 0 ? "1세대 · 뿌리" : (d+1) + "세대"}</div>`;
+  for (const id in L.pos) {
+    const p = px(L.pos[id]);
+    if (id === "__p") { cards += `<div class="node pending" style="left:${p.x}px;top:${p.y}px"><span class="spin"></span><span>새 아이디어가 태어나는 중</span></div>`; }
+    else { const n = N(id);
+      cards += `<button class="node ${id===T.root?"rootn":""} ${path.has(id)?"on-path":""} ${id===UI.sel?"sel":""}" data-id="${id}" style="left:${p.x}px;top:${p.y}px" aria-label="${depth(id)+1}세대 아이디어: ${esc(n.text)}">
+        <div class="nh"><span>G${depth(id)+1}${id===T.root?" · 뿌리":""}${n.changes.length?" · "+n.changes.map(c=>GK[c.k].ko).join("·")+" 바뀜":""}</span>${n.star?'<span class="star" aria-label="별표">★</span>':""}</div>
+        <div class="nt">${esc(n.text)}</div>${bandHTML(n)}</button>`; }
+    const parent = id === "__p" ? UI.pending.parent : N(id).parent;
+    if (parent) { const q = px(L.pos[parent]); const x1 = q.x + CW/2, y1 = q.y + CH, x2 = p.x + CW/2, y2 = p.y, my = (y1 + y2) / 2;
+      edges += `<path class="edge ${path.has(id)?"on":""}" d="M${x1},${y1} C${x1},${my} ${x2},${my} ${x2},${y2}"/>`; }
+  }
+  const cv = $("#canvas");
+  cv.style.width = L.w + "px"; cv.style.height = L.h + "px"; cv.style.transform = `scale(${UI.zoom})`;
+  cv.parentElement.dataset.w = L.w; cv.parentElement.dataset.h = L.h;
+  cv.innerHTML = rulers + `<svg width="${L.w}" height="${L.h}" aria-hidden="true">${edges}</svg>` + cards;
+  // keep scroll area matching scaled size
+  let sizer = $("#sizer"); if (!sizer) { sizer = document.createElement("div"); sizer.id = "sizer"; sizer.style.cssText = "position:absolute;top:0;left:0;width:1px;height:1px;pointer-events:none"; $("#scroller").append(sizer); }
+  sizer.style.transform = `translate(${L.w*UI.zoom}px,${L.h*UI.zoom}px)`;
+  cv.style.marginBottom = (L.h*UI.zoom - L.h) + "px"; cv.style.marginRight = (L.w*UI.zoom - L.w) + "px";
+  $("#rootBtn").textContent = rootText();
+  $("#banner").hidden = !T.example;
+}
+function focusNode(id, smooth){
+  const el = document.querySelector(`.node[data-id="${id}"]`); if (!el) return;
+  const sc = $("#scroller"), r = el.getBoundingClientRect(), s = sc.getBoundingClientRect();
+  if (r.left < s.left || r.right > s.right || r.top < s.top || r.bottom > s.bottom)
+    sc.scrollTo({ left: sc.scrollLeft + (r.left - s.left) - (s.width - r.width)/2, top: sc.scrollTop + (r.top - s.top) - (s.height - r.height)/2, behavior: smooth && !matchMedia("(prefers-reduced-motion:reduce)").matches ? "smooth" : "auto" });
+}
+$("#canvas").addEventListener("click", e => { const b = e.target.closest(".node[data-id]"); if (b) select(b.dataset.id); });
+function select(id){ if (UI.busy) { toast("지금 작업이 끝난 뒤에 이동할 수 있어요"); return; } UI.sel = id; UI.mode = "view"; UI.draft = null; UI.err = ""; UI.confirmDel = false; renderAll(); focusNode(id, true); }
+$("#rootBtn").onclick = () => select(T.root);
+$("#legend").innerHTML = GENES.map(g => `<span><i style="background:var(--g-${g.k})"></i>${g.ko}</span>`).join("") + '<span class="note">진한 칸 = 이번에 바뀐 유전자</span>';
+function fit(){ const sc = $("#scroller"), w = +sc.dataset.w || 1, h = +sc.dataset.h || 1; UI.zoom = Math.max(.35, Math.min(1, (sc.clientWidth - 8)/w, (sc.clientHeight - 8)/h)); renderTree(); }
+$("#zIn").onclick = () => { UI.zoom = Math.min(1.6, +(UI.zoom + .15).toFixed(2)); renderTree(); };
+$("#zOut").onclick = () => { UI.zoom = Math.max(.35, +(UI.zoom - .15).toFixed(2)); renderTree(); };
+$("#zFit").onclick = fit;
+
+/* ---------- panel ---------- */
+function renderAll(){ renderTree(); renderPanel(); }
+function renderPanel(){
+  const P = $("#panel");
+  const m = UI.mode;
+  P.innerHTML = m === "seed" ? seedView() : m === "read" ? readView() : m === "decomp" ? decompView() : m === "edit" ? editView() : nodeView();
+  bindPanel();
+}
+
+function nodeView(){
+  const n = N(UI.sel), d = depth(n.id), isLeaf = !kids(n.id).length && n.id !== T.root, anc = ancestry(n.id);
+  return `<div class="pbody">
+    <div class="phead"><span class="label">${d+1}세대${n.id===T.root?" · 뿌리":""}${kids(n.id).length?` · 자식 ${kids(n.id).length}`:""}</span><h2>선택한 아이디어</h2></div>
+    <div class="sec"><label class="label" for="nodeText">아이디어 문장</label><textarea id="nodeText" rows="3">${esc(n.text)}</textarea><span class="note">고친 문장은 자동으로 저장돼요.</span></div>
+    ${n.changes.length ? `<div class="sec"><span class="label">부모와 달라진 점</span><div class="diff">${n.changes.map(c => `<div><i style="${gc(c.k)}"></i><b>${GK[c.k].ko}</b> <s>${esc(c.from || "비어 있음")}</s> → ${c.to ? esc(c.to) : "<em>제거</em>"} <span class="src">${{me:"직접",random:"단어 카드"}[c.src]||""}</span></div>`).join("")}</div></div>` : ""}
+    <div class="sec"><div class="row"><span class="label grow">유전자</span>${n.genes?'<button class="link" data-act="fix">유전자 고치기</button>':""}</div>
+      ${n.genes ? `<div class="genes">${GENES.map(g => { const ch = n.changes.find(c => c.k === g.k); return `<div class="gene ${ch?"changed":""}"><div class="gk"><i style="${gc(g.k)}"></i>${g.ko}</div><div class="gv"><span class="val ${n.genes[g.k]?"":"nil"}">${esc(n.genes[g.k] || "비어 있음")}</span></div></div>`; }).join("")}</div>`
+      : `<p class="note">아직 해체하지 않았어요. 해체하면 이 아이디어를 6개의 유전자로 나눠 볼 수 있어요.</p>`}</div>
+    ${anc.length > 1 ? `<div class="sec"><span class="label">뿌리에서 여기까지</span><ol class="lineage">${anc.map((id,i) => { const a = N(id); return `<li><span class="g">G${i+1}</span><div><button data-goto="${id}" class="${id===n.id?"cur":""}">${esc(a.text)}</button>${a.changes.length?`<div class="note">${a.changes.map(c=>GK[c.k].ko+(c.to?" → "+esc(c.to):" 제거")).join(" · ")}</div>`:""}</div></li>`; }).join("")}</ol></div>` : ""}
+  </div>
+  <div class="pfoot">
+    <button class="btn grow" data-act="dissect" style="flex:1">이 아이디어 해체하기</button>
+    <button class="btn ghost" data-act="star" aria-pressed="${n.star}">${n.star?"★ 별표 해제":"☆ 별표"}</button>
+    ${isLeaf ? (UI.confirmDel ? `<button class="btn danger sm" data-act="delYes">정말 지우기</button><button class="btn ghost sm" data-act="delNo">취소</button>` : `<button class="btn ghost sm" data-act="del">가지 지우기</button>`) : ""}
+  </div>`;
+}
+
+function decompView(){
+  const n = N(UI.sel), D = UI.draft;
+  return `<div class="pbody">
+    <div class="phead"><span class="label">${depth(n.id)+1}세대 · 해체</span><h2>${D.fixOnly ? "유전자 고치기" : "6개의 유전자로 나누기"}</h2><p>${esc(n.text)}</p></div>
+    <p class="note">질문을 보고 이 아이디어를 직접 나눠 주세요. 문장에 드러나지 않거나 모르겠는 칸은 비워 둬도 돼요.</p>
+    <div class="genes">${GENES.map(g => `<div class="gene"><label class="gk" for="dv-${g.k}"><i style="${gc(g.k)}"></i>${g.ko}</label><div class="gv"><span class="from">${g.q}</span><input type="text" id="dv-${g.k}" data-dv="${g.k}" maxlength="40" placeholder="예: ${g.ex}" value="${esc(D.vals[g.k] || "")}"></div></div>`).join("")}</div>
+  </div>
+  <div class="pfoot"><button class="btn" data-act="decompOk" style="flex:1">${D.fixOnly ? "고친 유전자 저장" : "이대로 확정하고 바꿀 유전자 고르기"}</button><button class="btn ghost" data-act="cancel">취소</button></div>`;
+}
+
+function childGenes(){
+  const n = N(UI.sel), D = UI.draft, genes = { ...n.genes }, changes = [];
+  for (const g of GENES) {
+    const op = D.ops[g.k];
+    if (op === "mutate") { const v = clean(D.vals[g.k]); genes[g.k] = v; changes.push({ k:g.k, from:n.genes[g.k], to:v, src: D.src[g.k] || "me", ok: !!v && v !== n.genes[g.k] }); }
+    if (op === "remove") { genes[g.k] = ""; changes.push({ k:g.k, from:n.genes[g.k], to:"", src:"me", ok:true }); }
+  }
+  return { genes, changes, ok: changes.length > 0 && changes.every(c => c.ok) };
+}
+const canBirth = () => { const c = childGenes(); return c.ok && !!clean(UI.draft.text); };
+function editView(){
+  const n = N(UI.sel), D = UI.draft, C = childGenes();
+  return `<div class="pbody">
+    <div class="phead"><span class="label">${depth(n.id)+1}세대 → ${depth(n.id)+2}세대</span><h2>바꿀 유전자 고르기</h2><p>${esc(n.text)}</p></div>
+    <div class="genes">${GENES.map(g => { const op = D.ops[g.k], cur = n.genes[g.k]; return `<div class="gene ${op!=="keep"?"changed":""}">
+      <div class="gk"><i style="${gc(g.k)}"></i>${g.ko}</div>
+      <div class="gv"><span class="val ${cur?"":"nil"}">${esc(cur || "비어 있음")}</span>
+        <div class="seg" role="group" aria-label="${g.ko} 처리">${[["keep","유지"],["mutate","변이"],["remove","제거"]].map(([v,l]) => `<button data-op="${g.k}:${v}" class="${op===v?"on":""}" ${v==="remove"&&!cur?"disabled":""}>${l}</button>`).join("")}</div>
+        ${op === "mutate" ? `
+          <span class="from">생각할 방향</span>
+          <div class="chips">${DIRS[g.k].map(d => `<button class="chip ${D.dir[g.k]===d?"on":""}" data-dir="${g.k}" data-v="${esc(d)}">${esc(d)}</button>`).join("")}</div>
+          <input type="text" data-mv="${g.k}" maxlength="40" placeholder="${D.dir[g.k] ? esc(D.dir[g.k]) + "이라면? 직접 써 보세요" : "바꿀 내용을 직접 쓰거나 단어 카드 고르기"}" value="${esc(D.vals[g.k] || "")}" aria-label="${g.ko} 새 값">
+          <span class="from">단어 카드</span>
+          <div class="chips">${(D.sugg[g.k] || []).map(w => `<button class="chip ${clean(D.vals[g.k])===w?"on":""}" data-pick="${g.k}" data-v="${esc(w)}">${esc(w)}</button>`).join("")}<button class="link" data-sugg="${g.k}">다른 단어</button></div>` : ""}
+      </div></div>`; }).join("")}</div>
+    <p class="${C.changes.length > 2 ? "hint" : "note"}">${C.changes.length === 0 ? "유전자를 하나 이상 바꿔야 새 아이디어가 태어나요." : C.changes.length > 2 ? `${C.changes.length}개를 바꿨어요. 1~2개만 바꾸면 부모와의 차이가 더 잘 보여요.` : `${C.changes.length}개를 바꿨어요.`}</p>
+    ${C.changes.length ? `<div class="sec"><label class="label" for="childText">새 아이디어를 한 문장으로</label>
+      <div class="diff">${C.changes.map(c => `<div><i style="${gc(c.k)}"></i><b>${GK[c.k].ko}</b> <s>${esc(c.from || "비어 있음")}</s> → ${c.to ? esc(c.to) : (D.ops[c.k]==="remove" ? "<em>제거</em>" : '<span class="note">아직 비어 있음</span>')}</div>`).join("")}</div>
+      <textarea id="childText" rows="3" maxlength="200" placeholder="부모 문장에서 바뀐 부분만 고쳐 써 보세요">${esc(D.text || "")}</textarea>
+      <div class="row"><button class="link" data-act="draft">부모 문장 가져오기</button><button class="link" data-act="tpl">틀로 초안 만들기</button></div></div>` : ""}
+  </div>
+  <div class="pfoot">
+    <button class="btn" data-act="birth" style="flex:1" ${canBirth() ? "" : "disabled"}>새 아이디어 탄생</button>
+    <button class="btn ghost" data-act="cancel">취소</button>
+  </div>`;
+}
+
+function seedView(){
+  return `<div class="pbody">
+    <div class="phead"><span class="label">1세대</span><h2>새 씨앗 심기</h2><p>발전시키고 싶은 아이디어를 한두 문장으로 써 주세요. 이 문장이 계보의 뿌리가 되고, 다음 단계에서 직접 6개의 유전자로 나눠요.</p></div>
+    <textarea id="seedText" rows="4" maxlength="200" placeholder="예: 동네 빨래방에서 모르는 사람들이 잠깐 대화하게 만드는 장치"></textarea>
+    ${!T.example ? `<p class="hint">새 씨앗을 심으면 지금 계보는 사라져요. 이 브라우저에는 계보 하나만 저장돼요.</p>` : ""}
+  </div>
+  <div class="pfoot"><button class="btn" data-act="plant" style="flex:1">${!T.example && UI.confirmSeed ? "지금 계보를 지우고 심기" : "심고 해체하기"}</button><button class="btn ghost" data-act="cancel">취소</button></div>`;
+}
+
+function readView(){
+  const ids = T.order, nodesC = ids.length, gens = Math.max(...ids.map(depth)) + 1;
+  const cnt = Object.fromEntries(GENES.map(g => [g.k, 0])); const src = { me:0, random:0 }; let rm = 0;
+  ids.forEach(id => N(id).changes.forEach(c => { cnt[c.k]++; src[c.src] = (src[c.src] || 0) + 1; if (!c.to) rm++; }));
+  const total = Object.values(cnt).reduce((a,b) => a+b, 0), max = Math.max(1, ...Object.values(cnt));
+  const forks = ids.filter(id => kids(id).length > 1).length;
+  const never = GENES.filter(g => !cnt[g.k]).map(g => g.ko);
+  const top = GENES.slice().sort((a,b) => cnt[b.k] - cnt[a.k])[0];
+  const stars = ids.filter(id => N(id).star);
+  const obs = [];
+  if (nodesC < 2) obs.push("아직 씨앗만 있어요. 해체해서 첫 가지를 내 보세요.");
+  else {
+    if (cnt[top.k]) obs.push(`'${top.ko}'를 가장 많이 바꿨어요 (${cnt[top.k]}번).`);
+    if (never.length && never.length < 6) obs.push(`'${never.join("', '")}'는 한 번도 바꾸지 않았어요. 지키고 싶은 부분일까요, 떠올리지 못한 부분일까요?`);
+    if (src.me + src.random) obs.push(`변이 ${src.me + src.random}번 중 직접 떠올린 것 ${src.me}번, 단어 카드에서 고른 것 ${src.random}번이에요.`);
+    if (rm) obs.push(`유전자를 ${rm}번 제거했어요.`);
+    if (T.returns) obs.push(`앞 세대로 돌아가 다시 가지를 낸 적이 ${T.returns}번 있어요.`); else if (nodesC > 3) obs.push("한 번도 앞 세대로 돌아가지 않고 앞으로만 나아갔어요.");
+    if (stars.length) obs.push(`별표한 아이디어 ${stars.length}개 중 가장 깊은 것은 ${Math.max(...stars.map(depth))+1}세대예요.`);
+  }
+  return `<div class="pbody">
+    <div class="phead"><span class="label">계보 읽기</span><h2>나는 아이디어를 어떻게 바꾸는가</h2><p>${esc(rootText())}에서 시작한 계보</p></div>
+    <div class="stats">
+      <div class="stat"><b>${nodesC}</b><span>아이디어</span></div>
+      <div class="stat"><b>${gens}</b><span>세대</span></div>
+      <div class="stat"><b>${forks}</b><span>갈림길</span></div>
+      <div class="stat"><b>${T.returns || 0}</b><span>되돌아간 횟수</span></div>
+    </div>
+    <div class="sec"><span class="label">유전자별 변이 횟수</span><div class="bars">${GENES.map(g => `<div class="bar"><span>${g.ko}</span><span class="t"><i style="${gc(g.k)};width:${cnt[g.k]/max*100}%"></i></span><span class="n mono">${cnt[g.k]}</span></div>`).join("")}</div></div>
+    <div class="sec"><span class="label">관찰</span><ul class="obs">${obs.map(o => `<li>${esc(o)}</li>`).join("")}</ul></div>
+    ${stars.length ? `<div class="sec"><span class="label">별표한 아이디어</span><ol class="lineage">${stars.map(id => `<li><span class="g">G${depth(id)+1}</span><button data-goto="${id}">${esc(N(id).text)}</button></li>`).join("")}</ol></div>` : ""}
+  </div>
+  <div class="pfoot"><button class="btn ghost" data-act="cancel" style="flex:1">계보로 돌아가기</button></div>`;
+}
+
+/* ---------- panel events ---------- */
+function bindPanel(){
+  const P = $("#panel");
+  const ta = $("#nodeText");
+  if (ta) ta.addEventListener("change", () => { const v = ta.value.trim(); if (!v) { ta.value = N(UI.sel).text; return; } N(UI.sel).text = v.slice(0, 200); commit(); renderTree(); toast("문장을 저장했어요"); });
+}
+$("#panel").addEventListener("click", e => {
+  const go = e.target.closest("[data-goto]"); if (go) { select(go.dataset.goto); return; }
+  const op = e.target.closest("[data-op]"); if (op && !op.disabled) { const [k,v] = op.dataset.op.split(":"); UI.draft.ops[k] = v; if (v === "mutate" && !(UI.draft.sugg[k]||[]).length) getSugg(k); renderPanel(); return; }
+  const pk = e.target.closest("[data-pick]"); if (pk) { const k = pk.dataset.pick; UI.draft.vals[k] = pk.dataset.v; UI.draft.src[k] = "random"; renderPanel(); return; }
+  const dr = e.target.closest("[data-dir]"); if (dr) { const k = dr.dataset.dir; UI.draft.dir[k] = UI.draft.dir[k] === dr.dataset.v ? "" : dr.dataset.v; renderPanel(); const inp = document.querySelector(`[data-mv="${k}"]`); if (inp) inp.focus(); return; }
+  const sg = e.target.closest("[data-sugg]"); if (sg) { getSugg(sg.dataset.sugg); return; }
+  const a = e.target.closest("[data-act]"); if (!a) return;
+  const act = a.dataset.act, n = N(UI.sel);
+  if (act === "dissect") { if (n.genes) startEdit(); else startDecomp(false); }
+  if (act === "fix") startDecomp(true);
+  if (act === "decompOk") { const D = UI.draft; n.genes = Object.fromEntries(GENES.map(g => [g.k, clean(D.vals[g.k])])); commit(); if (D.fixOnly) { UI.mode = "view"; UI.draft = null; renderAll(); toast("유전자를 저장했어요"); } else { renderTree(); startEdit(); } }
+  if (act === "cancel") { UI.mode = "view"; UI.draft = null; UI.err = ""; UI.confirmSeed = false; renderPanel(); }
+  if (act === "star") { n.star = !n.star; commit(); renderAll(); }
+  if (act === "del") { UI.confirmDel = true; renderPanel(); }
+  if (act === "delNo") { UI.confirmDel = false; renderPanel(); }
+  if (act === "delYes") { const p = n.parent; delete T.nodes[n.id]; T.order = T.order.filter(x => x !== n.id); commit(); select(p); toast("가지를 지웠어요"); }
+  if (act === "birth") birth();
+  if (act === "plant") plant();
+  if (act === "draft") { UI.draft.text = n.text; renderPanel(); focusChild(); }
+  if (act === "tpl") { UI.draft.text = template(childGenes().genes); renderPanel(); focusChild(); }
+});
+$("#panel").addEventListener("input", e => {
+  const dv = e.target.dataset.dv, mv = e.target.dataset.mv;
+  if (dv) UI.draft.vals[dv] = e.target.value;
+  if (mv) { UI.draft.vals[mv] = e.target.value; UI.draft.src[mv] = (UI.draft.sugg[mv] || []).includes(clean(e.target.value)) ? "random" : "me";
+    document.querySelectorAll(`[data-pick="${mv}"]`).forEach(c => c.classList.toggle("on", c.dataset.v === clean(e.target.value))); }
+  if (e.target.id === "childText") UI.draft.text = e.target.value;
+  const btn = document.querySelector('[data-act="birth"]'); if (btn && UI.mode === "edit") btn.disabled = !canBirth();
+});
+
+/* ---------- actions ---------- */
+function commit(){ if (T.example) { T.example = false; } save(); }
+function startDecomp(fixOnly){
+  const n = N(UI.sel);
+  UI.mode = "decomp"; UI.err = ""; UI.draft = { fixOnly, vals: { ...(n.genes || {}) } };
+  renderPanel();
+  setTimeout(() => { const f = $("#dv-who"); if (f) f.focus(); }, 30);
+}
+function focusChild(){ setTimeout(() => { const t = $("#childText"); if (t) { t.focus(); t.setSelectionRange(t.value.length, t.value.length); } }, 30); }
+function startEdit(){
+  const n = N(UI.sel);
+  // coming back to an older generation that already has children counts as "going back"
+  UI.returning = T.order.length > 1 && (n.t || 0) < Math.max(...T.order.map(x => N(x).t || 0));
+  UI.mode = "edit"; UI.err = "";
+  UI.draft = { ops: Object.fromEntries(GENES.map(g => [g.k, "keep"])), vals: {}, sugg: {}, src: {}, dir: {}, text: "" };
+  renderPanel();
+}
+function getSugg(k){
+  const D = UI.draft, n = N(UI.sel); if (!D) return;
+  const seen = D.sugg[k] || [];
+  let pool = BANK[k].filter(w => w !== n.genes[k] && !seen.includes(w));
+  if (pool.length < 3) pool = BANK[k].filter(w => w !== n.genes[k]);
+  D.sugg[k] = shuffle(pool).slice(0, 3);
+  renderPanel();
+}
+function shuffle(a){ a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; } return a; }
+
+function birth(){
+  if (!canBirth()) return;
+  const parent = N(UI.sel), C = childGenes();
+  const child = { id: newId(), parent: parent.id, text: clean(UI.draft.text) ? UI.draft.text.trim().slice(0, 200) : "", genes: C.genes,
+    changes: C.changes.map(({ok, ...c}) => c), star: false, t: Math.max(...T.order.map(x => N(x).t || 0)) + 1 };
+  if (UI.returning) T.returns = (T.returns || 0) + 1;
+  T.nodes[child.id] = child; T.order.push(child.id);
+  UI.sel = child.id; UI.mode = "view"; UI.draft = null;
+  commit(); renderAll(); focusNode(child.id, true);
+  toast(`${depth(child.id)+1}세대가 태어났어요`);
+}
+function template(g){ // rough draft for manual mode: the person rewrites it into a sentence
+  const core = [g.what, g.how].filter(Boolean).join(" × ") || "새 아이디어";
+  const ctx = [g.who, g.where, g.mood].filter(Boolean).join(" · ");
+  return `${core}${ctx ? " (" + ctx + ")" : ""}${g.why ? " — " + g.why + "에서 출발" : ""}`;
+}
+async function plant(){
+  const v = ($("#seedText").value || "").trim();
+  if (!v) { toast("씨앗 아이디어를 먼저 써 주세요"); $("#seedText").focus(); return; }
+  if (!T.example && !UI.confirmSeed) { UI.confirmSeed = true; const keep = v; renderPanel(); $("#seedText").value = keep; return; }
+  const id = newId();
+  T = { root:id, nodes:{ [id]: { id, parent:null, text:v.slice(0,200), genes:null, changes:[], star:false, t:0 } }, order:[id], example:false, returns:0 };
+  UI.sel = id; UI.confirmSeed = false; UI.zoom = 1; save(); renderTree(); startDecomp(false);
+}
+$("#seedBtn").onclick = () => { if (UI.busy) return; UI.mode = "seed"; UI.confirmSeed = false; renderPanel(); setTimeout(() => $("#seedText") && $("#seedText").focus(), 30); };
+$("#bannerSeed").onclick = () => $("#seedBtn").click();
+$("#readBtn").onclick = () => { if (UI.busy) return; UI.mode = "read"; renderPanel(); };
+
+let tt; function toast(m){ const el = $("#toast"); el.textContent = m; el.classList.add("show"); clearTimeout(tt); tt = setTimeout(() => el.classList.remove("show"), 2200); }
+
+renderAll();
+requestAnimationFrame(() => { const sc = $("#scroller"); if (+sc.dataset.w > sc.clientWidth) fit(); focusNode(UI.sel); });
+})();
+</script>
+
+</body>
+</html>
